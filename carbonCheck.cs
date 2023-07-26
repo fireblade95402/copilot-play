@@ -122,6 +122,9 @@ namespace MyCarbon.Functions
                 // Get the latest 100 carbon intensity values from Azure Table Storage using current connectionstring
                 var queryResult = await carbonIntensityTable.QueryAsync<CarbonCheckEntity>().Where(x => x.PartitionKey == "CarbonIntensity").OrderByDescending(x => x.CreatedTime).Take(MaxCarbonIntensityRecords).ToListAsync();
 
+                //reserve the order of the records
+                queryResult.Reverse();
+
                 // Create a string containing the data for the graph
                 var graphData = "";
                 foreach (var entity in queryResult)
