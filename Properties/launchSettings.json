@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "copilot_play_2": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7236",
+      "launchBrowser": false
+    }
+  }
+}
