@@ -21,8 +21,24 @@ namespace MyCarbon.Functions
         private const int threshold = 100;
         private static readonly HttpClient _httpClient = new HttpClient();
 
+
+        
+        [FunctionName("CarbonCheckTimer")]
+        public static async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log,
+            [Table("CarbonIntensityData")] IAsyncCollector<CarbonCheckEntity> carbonIntensityTable,
+            [Table("CarbonIntensityData")] TableClient carbonIntensityTableQuery)
+        {
+            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+
+            // Call the carbonCheck_Manual function
+            var result = await carbonCheck_Manual(null, carbonIntensityTable, carbonIntensityTableQuery, log);
+
+            log.LogInformation(result.ToString());
+        }
+
+
         [FunctionName("carbonCheck_Manual")]
-        public static async Task<IActionResult> Run(
+        public static async Task<IActionResult> carbonCheck_Manual(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             [Table("CarbonIntensityData")] IAsyncCollector<CarbonCheckEntity> carbonIntensityTable,
             [Table("CarbonIntensityData")] TableClient carbonIntensityTableQuery,
