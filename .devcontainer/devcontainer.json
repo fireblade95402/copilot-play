@@ -13,7 +13,8 @@
 				"ms-dotnettools.csharp",
 				"GitHub.copilot",
 				"GitHub.copilot-chat",
-				"patcx.vscode-nuget-gallery"
+				"patcx.vscode-nuget-gallery",
+				"github.vscode-github-actions"
 			]
 		}
 	},
