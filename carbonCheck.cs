@@ -17,8 +17,8 @@ namespace MyCarbon.Functions
 {
     public class carbonCheck
     {
-        private const int MaxCarbonIntensityRecords = 250;
-        private const int threshold = 150;
+        private static int MaxCarbonIntensityRecords = System.Environment.GetEnvironmentVariable("MaxCarbonIntensityRecords") != null ? int.Parse(System.Environment.GetEnvironmentVariable("MaxCarbonIntensityRecords")) : 100 ;
+        private static int threshold = System.Environment.GetEnvironmentVariable("CarChargeThreshold") != null ? int.Parse(System.Environment.GetEnvironmentVariable("CarChargeThreshold")) : 100 ;
         private static readonly HttpClient _httpClient = new HttpClient();
 
 
@@ -142,7 +142,7 @@ namespace MyCarbon.Functions
                             <head>
                                 <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
                                 <script type='text/javascript'>
-                                    google.charts.load('current', {{ 'packages': ['corechart'] }});
+                                    google.charts.load('current', {{ 'packages': ['corechart', 'table'] }});
                                     google.charts.setOnLoadCallback(drawChart);
                                     function drawChart() {{
                                         var data = google.visualization.arrayToDataTable([
@@ -150,7 +150,8 @@ namespace MyCarbon.Functions
                                         {graphData}
                                         ]);
                                         var options = {{
-                                            title: 'Carbon Intensity',
+                                            title: 'Carbon Intensity vs Charge Car Threshold',
+                                            description: 'Last {MaxCarbonIntensityRecords} records with threshold of {threshold}',
                                             curveType: 'function',
                                             legend: {{ position: 'bottom' }},
                                             series: {{
@@ -166,25 +167,28 @@ namespace MyCarbon.Functions
                                         }};
                                         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
                                         chart.draw(data, options);
+
+                                        var chartDescription = document.getElementById('chart_description');
+                                        chartDescription.innerHTML = options.description; // Set the chart description
+                                     
+                                        var table = new google.visualization.Table(document.getElementById('table_div'));
+                                        table.draw(data, {{
+                                            showRowNumber: true,
+                                            page: 'enable',
+                                            pageSize: 20,
+                                            sortColumn: 0,
+                                            sortAscending: false
+
+                                        }});
                                     }}
                                 </script>
                             </head>
-                            <div id='curve_chart' style='width: 900px; height: 500px'></div>
-                            <table>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Carbon Intensity</th>
-                                    <th>CanChargeCar</th>
-                                </tr>
-                                @foreach (var dataPoint in Model.GraphData)
-                                {{
-                                    <tr>
-                                        <td>@dataPoint.Time</td>
-                                        <td>@dataPoint.CarbonIntensity</td>
-                                        <td>@dataPoint.CanChargeCar</td>
-                                    </tr>
-                                }}
-                            </table>
+                            <body>
+                                <H2>Carbon Intensity vs Charge Car Threshold</H2>
+                                <H3><div id='chart_description'></div></H3>
+                                <div id='curve_chart' style='width: 900px; height: 500px'></div>
+                                <br/>
+                                <div id='table_div'></div>
                             </body>
                         </html>"
                 };
