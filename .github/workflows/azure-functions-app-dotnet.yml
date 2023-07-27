@@ -21,7 +21,8 @@ name: Deploy DotNet project to Azure Function App
 on:
   push:
     branches: ["master"]
-
+  workflow_dispatch:
+  
 env:
   AZURE_FUNCTIONAPP_NAME: 'mycarbon-copilot-mwg'   # set this to your function app name on Azure
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # set this to the path to your function app project, defaults to the repository root
