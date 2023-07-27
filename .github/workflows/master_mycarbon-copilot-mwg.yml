@@ -49,6 +49,6 @@ jobs:
           # Name of the Azure Web App
           app-name: mycarbon-copilot-mwg
           # Name of an existing slot other than the production slot. Default value is production
-          app-settings-json: '[{ "name": "CarChargeTreshold", "value": ${{ env.CARCHARGETHRESHOLD }}, "slotSetting": false }, { "name": "MaxCarbonIntensityRecords", "value": ${{ env.MAXCARBONINTENSITYRECORDS }}, "slotSetting": false }]'
+          app-settings-json: '[{ "name": "CarChargeTreshold", "value": "${{ env.CARCHARGETHRESHOLD }}", "slotSetting": false }, { "name": "MaxCarbonIntensityRecords", "value": "${{ env.MAXCARBONINTENSITYRECORDS }}", "slotSetting": false }]'
       
 
