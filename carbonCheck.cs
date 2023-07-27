@@ -17,8 +17,8 @@ namespace MyCarbon.Functions
 {
     public class carbonCheck
     {
-        private const int MaxCarbonIntensityRecords = 100;
-        private const int threshold = 100;
+        private const int MaxCarbonIntensityRecords = 250;
+        private const int threshold = 150;
         private static readonly HttpClient _httpClient = new HttpClient();
 
 
@@ -169,8 +169,22 @@ namespace MyCarbon.Functions
                                     }}
                                 </script>
                             </head>
-                            <body>
-                                <div id='curve_chart' style='width: 900px; height: 500px'></div>
+                            <div id='curve_chart' style='width: 900px; height: 500px'></div>
+                            <table>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Carbon Intensity</th>
+                                    <th>CanChargeCar</th>
+                                </tr>
+                                @foreach (var dataPoint in Model.GraphData)
+                                {{
+                                    <tr>
+                                        <td>@dataPoint.Time</td>
+                                        <td>@dataPoint.CarbonIntensity</td>
+                                        <td>@dataPoint.CanChargeCar</td>
+                                    </tr>
+                                }}
+                            </table>
                             </body>
                         </html>"
                 };
