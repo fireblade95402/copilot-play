@@ -43,4 +43,12 @@ jobs:
           app-name: 'mycarbon-copilot-mwg'
           slot-name: 'Production'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+      - name: Azure App Service Settings
+        uses: Azure/appservice-settings@v1
+        with:
+          # Name of the Azure Web App
+          app-name: mycarbon-copilot-mwg
+          # Name of an existing slot other than the production slot. Default value is production
+          app-settings-json: '[{ "name": "Hello", "value": "World", "slotSetting": false }]'
+      
 
