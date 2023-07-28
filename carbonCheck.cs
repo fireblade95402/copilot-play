@@ -1,7 +1,5 @@
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Azure;
 using Azure.Data.Tables;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
