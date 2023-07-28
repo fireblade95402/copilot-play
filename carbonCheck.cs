@@ -17,14 +17,13 @@ namespace MyCarbon.Functions
     {
         private static int MaxCarbonIntensityRecords = System.Environment.GetEnvironmentVariable("MaxCarbonIntensityRecords") != null ? int.Parse(System.Environment.GetEnvironmentVariable("MaxCarbonIntensityRecords")) : 100 ;
         private static int threshold = System.Environment.GetEnvironmentVariable("CarChargeThreshold") != null ? int.Parse(System.Environment.GetEnvironmentVariable("CarChargeThreshold")) : 100 ;
+        private static string Environment = System.Environment.GetEnvironmentVariable("Environment") != null && System.Environment.GetEnvironmentVariable("Environment") != "Production" ? System.Environment.GetEnvironmentVariable("Environment") : "" ;
         private static readonly HttpClient _httpClient = new HttpClient();
-
-
         
         [FunctionName("CarbonCheckTimer")]
-        public static async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log,
-            [Table("CarbonIntensityData")] IAsyncCollector<CarbonCheckEntity> carbonIntensityTable,
-            [Table("CarbonIntensityData")] TableClient carbonIntensityTableQuery)
+        public static async Task Run([TimerTrigger("%CarbonCheckCron%")] TimerInfo myTimer, ILogger log,
+            [Table("%AzureStorageTableName%", Connection = "AzureStorageTableConnection")] IAsyncCollector<CarbonCheckEntity> carbonIntensityTable,
+            [Table("%AzureStorageTableName%", Connection = "AzureStorageTableConnection")] TableClient carbonIntensityTableQuery)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
@@ -34,12 +33,11 @@ namespace MyCarbon.Functions
             log.LogInformation(result.ToString());
         }
 
-
         [FunctionName("carbonCheck_Manual")]
         public static async Task<IActionResult> carbonCheck_Manual(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            [Table("CarbonIntensityData")] IAsyncCollector<CarbonCheckEntity> carbonIntensityTable,
-            [Table("CarbonIntensityData")] TableClient carbonIntensityTableQuery,
+            [Table("%AzureStorageTableName%", Connection = "AzureStorageTableConnection")] IAsyncCollector<CarbonCheckEntity> carbonIntensityTable,
+            [Table("%AzureStorageTableName%", Connection = "AzureStorageTableConnection")] TableClient carbonIntensityTableQuery,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -110,7 +108,7 @@ namespace MyCarbon.Functions
         [FunctionName("GetCarbonIntensityGraph")]
         public static async Task<IActionResult> GetCarbonIntensityGraph(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
-            [Table("CarbonIntensityData")] TableClient carbonIntensityTable,
+            [Table("%AzureStorageTableName%", Connection = "AzureStorageTableConnection")] TableClient carbonIntensityTable,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -130,7 +128,7 @@ namespace MyCarbon.Functions
                     graphData += $"['{entity.RowKey}', {entity.CarbonIntensity}, {threshold}],";
                 }
                 graphData = graphData.TrimEnd(',');
-                log.LogInformation("Carbon Intensity - Graph Data: " + graphData);
+                
                 // Return the graph html
                 return new ContentResult
                 {
@@ -182,6 +180,7 @@ namespace MyCarbon.Functions
                                 </script>
                             </head>
                             <body>
+                                <H1>{Environment}</H1>
                                 <H2>Carbon Intensity vs Charge Car Threshold v2</H2>
                                 <H3><div id='chart_description'></div></H3>
                                 <div id='curve_chart' style='width: 900px; height: 500px'></div>
