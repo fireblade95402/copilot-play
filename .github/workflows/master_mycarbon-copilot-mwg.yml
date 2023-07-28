@@ -7,6 +7,16 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**.cs'
+      - '**.csproj'
+      - '**.json'
+    paths-ignore:
+      - '.devcontainer/**'
+      - '.vscode/**'
+      - '.Properties/**'
+      - '.github/workflows/**'
+      
   workflow_dispatch:
 
 env:
