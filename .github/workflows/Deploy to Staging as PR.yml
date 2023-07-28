@@ -4,18 +4,10 @@
 name: Build and deploy dotnet core app to Azure Function App - mycarbon-copilot-mwg
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - '**.cs'
-      - '**.csproj'
-      - '**.json'
-    paths-ignore:
-      - '.devcontainer/**'
-      - '.vscode/**'
-      - '.Properties/**'
-      - '.github/workflows/**'
+  # Triggers the workflow on pull request events but only for the main branch
+  pull_request:
+    branches: [master]
+    types: [opened]
       
   workflow_dispatch:
 
@@ -57,9 +49,8 @@ jobs:
       - name: Azure App Service Settings
         uses: Azure/appservice-settings@v1
         with:
-          # Name of the Azure Web App
           app-name: mycarbon-copilot-mwg
-          # Name of an existing slot other than the production slot. Default value is production
+          slot-name: staging
           app-settings-json: '[{ "name": "CarChargeThreshold", "value": "${{ vars.CARCHARGETHRESHOLD }}", "slotSetting": false }, { "name": "MaxCarbonIntensityRecords", "value": "${{ vars.MAXCARBONINTENSITYRECORDS }}", "slotSetting": false }]'
       
 
