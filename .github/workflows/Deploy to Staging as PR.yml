@@ -51,6 +51,6 @@ jobs:
         with:
           app-name: mycarbon-copilot-mwg
           slot-name: staging
-          app-settings-json: '[{ "name": "CarChargeThreshold", "value": "${{ vars.CARCHARGETHRESHOLD }}", "slotSetting": false }, { "name": "MaxCarbonIntensityRecords", "value": "${{ vars.MAXCARBONINTENSITYRECORDS }}", "slotSetting": false }]'
+          app-settings-json: '[{ "name": "CarChargeThreshold", "value": "${{ vars.CARCHARGETHRESHOLD }}", "slotSetting": true }, { "name": "MaxCarbonIntensityRecords", "value": "${{ vars.MAXCARBONINTENSITYRECORDS }}", "slotSetting": true }]'
       
 
