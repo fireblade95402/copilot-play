@@ -19,7 +19,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: windows-latest
-    environment: dev
+    environment: staging
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2
@@ -52,6 +52,6 @@ jobs:
         with:
           app-name: mycarbon-copilot-mwg
           slot-name: '${{ env.SLOT_NAME }}'
-          app-settings-json: '${{ secrets.APP_SETTINGS }}'
+          app-settings-json: '${{ vars.APP_SETTINGS }}'
       
 
