@@ -10,16 +10,17 @@ using Newtonsoft.Json;
 using MyCarbon.Common;
 using System.Net.Http;
 using System;
+using System.Collections.Generic;
 
 namespace MyCarbon.Functions
 {
     public class carbonCheck
     {
-        private static int MaxCarbonIntensityRecords = System.Environment.GetEnvironmentVariable("MaxCarbonIntensityRecords") != null ? int.Parse(System.Environment.GetEnvironmentVariable("MaxCarbonIntensityRecords")) : 100 ;
-        private static int threshold = System.Environment.GetEnvironmentVariable("CarChargeThreshold") != null ? int.Parse(System.Environment.GetEnvironmentVariable("CarChargeThreshold")) : 100 ;
-        private static string Environment = System.Environment.GetEnvironmentVariable("Environment") != null && System.Environment.GetEnvironmentVariable("Environment") != "Production" ? System.Environment.GetEnvironmentVariable("Environment") : "" ;
+        private static int MaxCarbonIntensityRecords = System.Environment.GetEnvironmentVariable("MaxCarbonIntensityRecords") != null ? int.Parse(System.Environment.GetEnvironmentVariable("MaxCarbonIntensityRecords")) : 100;
+        private static int threshold = System.Environment.GetEnvironmentVariable("CarChargeThreshold") != null ? int.Parse(System.Environment.GetEnvironmentVariable("CarChargeThreshold")) : 100;
+        private static string Environment = System.Environment.GetEnvironmentVariable("Environment") != null && System.Environment.GetEnvironmentVariable("Environment") != "Production" ? System.Environment.GetEnvironmentVariable("Environment") : "";
         private static readonly HttpClient _httpClient = new HttpClient();
-        
+
         [FunctionName("CarbonCheckTimer")]
         public static async Task Run([TimerTrigger("%CarbonCheckCron%")] TimerInfo myTimer, ILogger log,
             [Table("%AzureStorageTableName%", Connection = "AzureStorageTableConnection")] IAsyncCollector<CarbonCheckEntity> carbonIntensityTable,
@@ -128,7 +129,7 @@ namespace MyCarbon.Functions
                     graphData += $"['{entity.RowKey}', {entity.CarbonIntensity}, {threshold}],";
                 }
                 graphData = graphData.TrimEnd(',');
-                
+
                 // Return the graph html
                 return new ContentResult
                 {
@@ -196,6 +197,81 @@ namespace MyCarbon.Functions
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
+
+
+
+        [FunctionName("ShowCarbonGraph")]
+        public static async Task<IActionResult> ShowCarbonGraph(
+
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+            [Table("%AzureStorageTableName%", Connection = "AzureStorageTableConnection")] TableClient carbonIntensityTable,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            // Get the carbon intensity from the Azure Table Storage.
+            var queryResult = await carbonIntensityTable.QueryAsync<CarbonCheckEntity>().Where(x => x.PartitionKey == "CarbonIntensity").OrderByDescending(x => x.CreatedTime).Take(100).ToListAsync();
+
+            var carbonChecks = queryResult.OrderByDescending(x => x.Timestamp).ToList();
+
+            // Create the data for the graph.
+            List<string> labels = queryResult.Select(c => c.CreatedTime.ToString("yyyy-MM-dd HH:mm:ss")).ToList();
+            List<int> values = queryResult.Select(c => c.CarbonIntensity).ToList();
+            string data = JsonConvert.SerializeObject(new { labels, values });
+            log.LogInformation($"Data: {data}");
+            // Create the HTML for the graph.
+            string html = $@"
+            <html>
+            <head>
+                <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+            </head>
+            <body>
+                <canvas id='myChart'></canvas>
+                <script>
+                    var data = {data};
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var myChart = new Chart(ctx, {{
+                        type: 'line',
+                        data: {{
+                            labels: data.labels,
+                            datasets: [{{
+                                label: 'Carbon Intensity',
+                                data: data.values,
+                                fill: false,
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            }},
+                            {{
+                                label: 'Threshold',
+                                data: Array(data.values.length).fill({threshold}),
+                                fill: true,
+                                borderColor: 'rgb(255, 0, 0)',
+                                borderDash: [5, 5],
+                                tension: 0.1
+                            }}]
+                        }},
+                        options: {{
+                            scales: {{
+                                y: {{
+                                    beginAtZero: true
+                                }}
+                            }}
+                        }}
+                    }});
+                </script>
+            </body>
+            </html>";
+
+            return new ContentResult
+            {
+                Content = html,
+                ContentType = "text/html",
+                StatusCode = 200
+            };
+        }
+
+
+
 
     }
 }
