@@ -1,3 +1,28 @@
+        // Azure function is triggered by an HTTP request
+        // Check the carbon intensity of the uk grid if I should charge my car calling the following api:  https://api.carbonintensity.org.uk/intensity/
+        // If it's below 100g/kWh, return a message saying it's okay to charge
+        // If it's above 100g/kWh, return a message saying it's not okay to charge
+        // take the response from the API in the following json format:
+        // {
+        //     "data": [
+        //         {
+        //             "from": "2023-07-19T10:30Z",
+        //             "to": "2023-07-19T11:00Z",
+        //             "intensity": {
+        //                 "forecast": 187,
+        //                 "actual": 186,
+        //                 "index": "moderate"
+        //             }
+        //         }
+        //     ]
+        // }
+        // and return a message in the following format:
+        // {
+        //     "message": "It's okay to charge your car"
+        // }
+        // and save the json responses to Azure Storage Table for later analytics and visualisation using an outbound binding
+        // https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-table-output?tabs=csharp
+        
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Data.Tables;
