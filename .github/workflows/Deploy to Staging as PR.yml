@@ -39,7 +39,8 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
+      - name: Start Staging slot
+        run: az functionapp start -s ${{ env.SLOT_NAME }} -n ${{ env.WEBAPP_NAME }} -g ${{ env.RESOURCE_GROUP }}
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa

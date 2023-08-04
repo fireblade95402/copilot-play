@@ -29,3 +29,5 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Swap slots
         run: az webapp deployment slot swap -s ${{ env.SLOT_NAME }} -n ${{ env.WEBAPP_NAME }} -g ${{ env.RESOURCE_GROUP }}
+      - name: Stop Staging slot
+        run: az functionapp stop -s ${{ env.SLOT_NAME }} -n ${{ env.WEBAPP_NAME }} -g ${{ env.RESOURCE_GROUP }}
