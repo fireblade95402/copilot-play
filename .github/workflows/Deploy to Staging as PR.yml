@@ -15,6 +15,9 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
   SLOT_NAME: 'staging'
+  WEBAPP_NAME: 'mycarbon-copilot-mwg'
+  RESOURCE_GROUP: 'mycarbon-copilot-mwg-rg'
+
 
 jobs:
   build-and-deploy:
@@ -45,13 +48,13 @@ jobs:
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: 'mycarbon-copilot-mwg'
+          app-name: '${{ env.WEBAPP_NAME }}'
           slot-name: '${{ env.SLOT_NAME }}'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
       - name: Azure App Service Settings
         uses: Azure/appservice-settings@v1
         with:
-          app-name: mycarbon-copilot-mwg
+          app-name: '${{ env.WEBAPP_NAME }}'
           slot-name: '${{ env.SLOT_NAME }}'
           app-settings-json: '${{ vars.APP_SETTINGS }}'
       
