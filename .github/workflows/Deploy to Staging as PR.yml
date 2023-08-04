@@ -22,7 +22,7 @@ env:
   DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
   SLOT_NAME: 'staging'
   WEBAPP_NAME: 'mycarbon-copilot-mwg'
-  RESOURCE_GROUP: 'mycarbon-copilot-mwg-rg'
+  RESOURCE_GROUP: 'demo-copilot-challange'
 
 jobs:
   build-and-deploy:
