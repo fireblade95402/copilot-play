@@ -6,6 +6,12 @@ name: Build and Deploy to Staging Environment
 on:
   # Triggers the workflow on pull request events but only for the main branch
   pull_request:
+    paths-ignore:
+      - './.github/**'
+      - '/.devcontainer/**'
+      - '/.vscode/**'
+      - '/.gitignore'
+      - 'Properties/**'
     branches: [master]
     types: [opened]
       

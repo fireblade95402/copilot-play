@@ -6,9 +6,16 @@ name: Swap slots Staging to Production
 on:
   # Triggers the workflow on pull request events but only for the main branch
   push:
+    paths-ignore:
+      - './.github/**'
+      - '/.devcontainer/**'
+      - '/.vscode/**'
+      - '/.gitignore'
+      - 'Properties/**'
     branches:
       - master
-      
+    
+     
   workflow_dispatch:
 
 env:
