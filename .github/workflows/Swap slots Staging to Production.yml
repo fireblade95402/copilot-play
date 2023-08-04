@@ -5,9 +5,9 @@ name: Swap slots Staging to Production
 
 on:
   # Triggers the workflow on pull request events but only for the main branch
-  pull_request:
-    branches: [master]
-    types: [closed]
+  push:
+    branches:
+      - main  
       
   workflow_dispatch:
 
