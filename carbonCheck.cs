@@ -207,7 +207,7 @@ namespace MyCarbon.Functions
                             </head>
                             <body>
                                 <H1>{Environment}</H1>
-                                <H2>Carbon Intensity vs Charge Car Threshold v3</H2>
+                                <H2>Carbon Intensity vs Charge Car Threshold v4</H2>
                                 <H3><div id='chart_description'></div></H3>
                                 <div id='curve_chart' style='width: 900px; height: 500px'></div>
                                 <br/>
